@@ -35,9 +35,9 @@ func timer() {
 		case <-togglePause:
 			paused = !paused
 			if paused {
-				fmt.Printf("\r%02d:%02d [PAUSED] type 'p' + Enter to resume\n", int(remaining.Minutes()), int(remaining.Seconds())%60)
+				fmt.Printf("\033[2K\r%02d:%02d [PAUSED] type 'p' + Enter to resume", int(remaining.Minutes()), int(remaining.Seconds())%60)
 			} else {
-				fmt.Println("[RESUMED]")
+				fmt.Print("\033[2K\r[RESUMED]")
 				ticker.Reset(time.Second)
 			}
 		case <-ticker.C:
@@ -49,5 +49,5 @@ func timer() {
 		}
 	}
 
-	fmt.Println("\r00:00 time elapsed    \a")
+	fmt.Println("\033[2K\r00:00 time elapsed")
 }

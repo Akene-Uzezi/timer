@@ -15,7 +15,7 @@ func pomodorotimer() {
 	var b string
 	if len(args) < 2 {
 		log.Println("pomodoro cycle duration and break duration not stated. using default")
-		p = "10s"
+		p = "25m"
 		b = "5m"
 	} else {
 		p = args[0]
@@ -27,14 +27,14 @@ func pomodorotimer() {
 		log.Fatalf("Invalid duration %q: %v", p, err)
 	}
 
-	_, err = time.ParseDuration(b)
+	breakduration, err := time.ParseDuration(b)
 	if err != nil {
 		log.Fatalf("Invalid duration %q: %v", b, err)
 	}
 
 	remaining := pomodoroduration
 	paused := false
-	_ = false
+	breaktime := false
 
 	togglePause := make(chan struct{})
 	go parseInput(togglePause)
@@ -47,9 +47,9 @@ func pomodorotimer() {
 		case <-togglePause:
 			paused = !paused
 			if paused {
-				fmt.Printf("\r%02d:%02d [PAUSED] type 'p' + Enter to resume\n", int(remaining.Minutes()), int(remaining.Seconds())%60)
+				fmt.Printf("\033[2K\r%02d:%02d [PAUSED] type 'p' + Enter to resume", int(remaining.Minutes()), int(remaining.Seconds())%60)
 			} else {
-				fmt.Println("[RESUMED]")
+				fmt.Print("\033[2K\r[RESUMED]")
 				ticker.Reset(time.Second)
 			}
 		case <-ticker.C:
@@ -58,8 +58,16 @@ func pomodorotimer() {
 			}
 			remaining -= time.Second
 			printRemaining(remaining)
+			if remaining <= 0 {
+				if !breaktime {
+					fmt.Print("\033[2K\rPomodoro done! Starting Break...\a")
+					remaining = breakduration
+				} else {
+					fmt.Print("\033[2K\rBreak done! Starting next pomodoro\a")
+					remaining = pomodoroduration
+				}
+				breaktime = !breaktime
+			}
 		}
 	}
-
-	fmt.Println("\rdone           \a")
 }

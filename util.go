@@ -9,7 +9,7 @@ import (
 )
 
 func printRemaining(remaining time.Duration) {
-	fmt.Printf("\r%02d:%02d remaining", int(remaining.Minutes()), int(remaining.Seconds())%60)
+	fmt.Printf("\033[2K\r%02d:%02d remaining", int(remaining.Minutes()), int(remaining.Seconds())%60)
 }
 
 func parseInput(togglePause chan<- struct{}) {
@@ -18,6 +18,9 @@ func parseInput(togglePause chan<- struct{}) {
 		cmd := strings.TrimSpace(scanner.Text())
 		if cmd == "p" {
 			togglePause <- struct{}{}
+		}
+		if cmd == "s" {
+			os.Exit(0)
 		}
 	}
 }
