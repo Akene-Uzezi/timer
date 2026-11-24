@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 )
 
 func main() {
@@ -12,6 +11,6 @@ func main() {
 	if !pomodoro {
 		timer()
 	} else {
-		fmt.Printf("pomodoro: %v", pomodoro)
+		pomodorotimer()
 	}
 }
