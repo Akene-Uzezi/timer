@@ -1,13 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"time"
 )
 
-func timerloop() {
+func timerloop(togglePause chan bool) {
 	if len(os.Args) < 2 || os.Args[1] == "" {
 		log.Println("no time stated")
 		os.Exit(1)
@@ -30,6 +31,17 @@ func timerloop() {
 	fmt.Println("\r00:00 time elapsed")
 }
 
+func parseInput(togglePause chan bool) {
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		cmd := scanner.Text()
+		if cmd == " " {
+			togglePause <- true
+		}
+	}
+}
+
 func main() {
-	timerloop()
+	togglePause := make(chan bool)
+	timerloop(togglePause)
 }
