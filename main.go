@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var pomodoro bool
+
 func timerloop() {
 	var input string
 	if len(os.Args) < 2 || os.Args[1] == "" {
