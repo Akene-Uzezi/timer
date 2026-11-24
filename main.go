@@ -43,5 +43,23 @@ func parseInput(togglePause chan bool) {
 
 func main() {
 	togglePause := make(chan bool)
-	timerloop(togglePause)
+	go parseInput(togglePause)
+	paused := false
+	for {
+		select {
+		case <-togglePause:
+			paused = !paused
+			if paused {
+				fmt.Println("\n[PAUSED] Type ' ' + Enter to resume...")
+			} else {
+				fmt.Println("[RESUMED]")
+			}
+		default:
+			if !paused {
+				timerloop(togglePause)
+			} else {
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+	}
 }
