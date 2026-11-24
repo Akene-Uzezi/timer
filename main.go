@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -29,13 +30,14 @@ func timerloop(togglePause chan bool) {
 
 	}
 	fmt.Println("\r00:00 time elapsed")
+	os.Exit(0)
 }
 
 func parseInput(togglePause chan bool) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		cmd := scanner.Text()
-		if cmd == " " {
+		cmd := strings.TrimSpace(scanner.Text())
+		if cmd == "p" {
 			togglePause <- true
 		}
 	}
@@ -50,7 +52,7 @@ func main() {
 		case <-togglePause:
 			paused = !paused
 			if paused {
-				fmt.Println("\n[PAUSED] Type ' ' + Enter to resume...")
+				fmt.Println("\n[PAUSED] Type 'p' + Enter to resume...")
 			} else {
 				fmt.Println("[RESUMED]")
 			}
