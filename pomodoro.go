@@ -61,5 +61,5 @@ func pomodorotimer() {
 		}
 	}
 
-	fmt.Println("\rdone")
+	fmt.Println("\rdone           \a")
 }
