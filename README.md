@@ -2,6 +2,8 @@
 
 A simple command-line countdown timer written in Go with two modes: Timer and Pomodoro.
 
+[![Architecture diagram of akene-uzezi/timer](https://gitdiagram.com/akene-uzezi/timer/diagram.png)](https://gitdiagram.com/akene-uzezi/timer?utm_source=readme&utm_medium=picture)
+
 ## Usage
 
 ```bash
@@ -23,6 +25,7 @@ go run main.go -p <pomodoro-duration> <break-duration>
 ## Duration Format
 
 The duration accepts Go's `time.ParseDuration` format:
+
 - `1h` - 1 hour
 - `30m` - 30 minutes
 - `1m30s` - 1 minute 30 seconds
@@ -59,6 +62,7 @@ go run main.go -p 1h 15m
 ## Controls
 
 During the countdown:
+
 - Type `p` + Enter to **pause/resume** the timer
 - Type `s` + Enter to **stop/quit** the timer
 
@@ -82,10 +86,13 @@ This builds the binary and installs it to `/usr/bin/timer` (requires sudo). Afte
 ## How It Works
 
 ### Timer Mode
+
 The timer counts down from the specified duration, updating the display every second in `MM:SS` format. When the timer reaches zero, it displays "00:00 time elapsed" with a terminal bell.
 
 ### Pomodoro Mode
+
 Runs alternating work and break cycles:
+
 - Default: 25 minutes work / 5 minutes break
 - After 4 work cycles, takes a long break (15 minutes)
 - Cycles continue indefinitely until stopped
