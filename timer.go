@@ -49,5 +49,5 @@ func timer() {
 		}
 	}
 
-	fmt.Println("\033[2K\r00:00 time elapsed")
+	fmt.Println("\033[2K\r00:00 time elapsed\a")
 }
