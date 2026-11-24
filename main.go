@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func timerloop(togglePause chan bool) {
+func timerloop() {
 	if len(os.Args) < 2 || os.Args[1] == "" {
 		log.Println("no time stated")
 		os.Exit(1)
@@ -22,46 +22,51 @@ func timerloop(togglePause chan bool) {
 		log.Fatalf("invalid duration %q: %v", input, err)
 	}
 
-	for remaining := duration; remaining > 0; remaining -= time.Second {
-		minutes := int(remaining.Minutes())
-		seconds := int(remaining.Seconds()) % 60
-		fmt.Printf("\r%02d:%02d remaining", minutes, seconds)
-		time.Sleep(time.Second)
+	togglePause := make(chan struct{})
+	go parseInput(togglePause)
 
+	remaining := duration
+	paused := false
+
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
+	for remaining > 0 {
+		select {
+		case <-togglePause:
+			paused = !paused
+			if paused {
+				fmt.Printf("\r%02d:%02d [PAUSED] type 'p' + Enter to resume\n", int(remaining.Minutes()), int(remaining.Seconds())%60)
+			} else {
+				fmt.Println("[RESUMED]")
+				ticker.Reset(time.Second)
+			}
+		case <-ticker.C:
+			if paused {
+				continue
+			}
+			remaining -= time.Second
+			printRemaining(remaining)
+		}
 	}
-	fmt.Println("\r00:00 time elapsed")
-	os.Exit(0)
+
+	fmt.Println("\r00:00 time elapsed    ")
 }
 
-func parseInput(togglePause chan bool) {
+func printRemaining(remaining time.Duration) {
+	fmt.Printf("\r%02d:%02d remaining", int(remaining.Minutes()), int(remaining.Seconds())%60)
+}
+
+func parseInput(togglePause chan<- struct{}) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		cmd := strings.TrimSpace(scanner.Text())
 		if cmd == "p" {
-			togglePause <- true
+			togglePause <- struct{}{}
 		}
 	}
 }
 
 func main() {
-	togglePause := make(chan bool)
-	go parseInput(togglePause)
-	paused := false
-	for {
-		select {
-		case <-togglePause:
-			paused = !paused
-			if paused {
-				fmt.Println("\n[PAUSED] Type 'p' + Enter to resume...")
-			} else {
-				fmt.Println("[RESUMED]")
-			}
-		default:
-			if !paused {
-				timerloop(togglePause)
-			} else {
-				time.Sleep(100 * time.Millisecond)
-			}
-		}
-	}
+	timerloop()
 }
