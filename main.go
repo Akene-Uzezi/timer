@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func main() {
+func timerloop() {
 	if len(os.Args) < 2 || os.Args[1] == "" {
 		log.Println("no time stated")
 		os.Exit(1)
@@ -28,4 +28,8 @@ func main() {
 
 	}
 	fmt.Println("\r00:00 time elapsed")
+}
+
+func main() {
+	timerloop()
 }
