@@ -50,7 +50,7 @@ func timerloop() {
 		}
 	}
 
-	fmt.Println("\r00:00 time elapsed    ")
+	fmt.Println("\r00:00 time elapsed    \a")
 }
 
 func printRemaining(remaining time.Duration) {
