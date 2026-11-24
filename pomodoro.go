@@ -35,6 +35,7 @@ func pomodorotimer() {
 	remaining := pomodoroduration
 	paused := false
 	breaktime := false
+	cycle := 0
 
 	togglePause := make(chan struct{})
 	go parseInput(togglePause)
@@ -60,8 +61,15 @@ func pomodorotimer() {
 			printRemaining(remaining)
 			if remaining <= 0 {
 				if !breaktime {
-					fmt.Print("\033[2K\rPomodoro done! Starting Break...\a")
-					remaining = breakduration
+					cycle++
+					if cycle == 4 {
+						fmt.Print("\033[2K\rPomodoro done! Starting long break...\a")
+						remaining = 15 * time.Minute
+						cycle = 0
+					} else {
+						fmt.Print("\033[2K\rPomodoro done! Starting break...\a")
+						remaining = breakduration
+					}
 				} else {
 					fmt.Print("\033[2K\rBreak done! Starting next pomodoro\a")
 					remaining = pomodoroduration
