@@ -2,14 +2,13 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"time"
 )
-
-var pomodoro bool
 
 func timerloop() {
 	var input string
@@ -71,5 +70,12 @@ func parseInput(togglePause chan<- struct{}) {
 }
 
 func main() {
-	timerloop()
+	var pomodoro bool
+	flag.BoolVar(&pomodoro, "p", false, "set the mode for the cli to pomodoro")
+	flag.Parse()
+	if !pomodoro {
+		timerloop()
+	} else {
+		fmt.Printf("pomodoro: %v", pomodoro)
+	}
 }
