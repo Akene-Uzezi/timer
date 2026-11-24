@@ -10,12 +10,13 @@ import (
 )
 
 func timerloop() {
+	var input string
 	if len(os.Args) < 2 || os.Args[1] == "" {
-		log.Println("no time stated")
-		os.Exit(1)
+		log.Println("no time stated. using default 30s")
+		input = "30s"
+	} else {
+		input = os.Args[1]
 	}
-
-	input := os.Args[1]
 
 	duration, err := time.ParseDuration(input)
 	if err != nil {
