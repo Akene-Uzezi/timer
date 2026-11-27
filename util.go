@@ -12,8 +12,12 @@ func printRemaining(remaining time.Duration) {
 	fmt.Printf("\033[2K\r%02d:%02d remaining", int(remaining.Minutes()), int(remaining.Seconds())%60)
 }
 
-func printRemainingPomodoro(remaining time.Duration, cycle int) {
-	fmt.Printf("\033[2K\r pomodoro %d %02d:%02d remaining", cycle, int(remaining.Minutes()), int(remaining.Seconds())%60)
+func printRemainingPomodoro(remaining time.Duration, cycle int, breaktime bool) {
+	if breaktime {
+		fmt.Printf("\033[2K\r breaktime %02d:%02d remaining", int(remaining.Minutes()), int(remaining.Seconds())%60)
+	} else {
+		fmt.Printf("\033[2K\r pomodoro %d %02d:%02d remaining", cycle, int(remaining.Minutes()), int(remaining.Seconds())%60)
+	}
 }
 
 func parseInput(togglePause chan<- struct{}) {

@@ -58,7 +58,7 @@ func pomodorotimer() {
 				continue
 			}
 			remaining -= time.Second
-			printRemainingPomodoro(remaining, cycle)
+			printRemainingPomodoro(remaining, cycle, breaktime)
 			if remaining <= 0 {
 				if !breaktime {
 					cycle++
