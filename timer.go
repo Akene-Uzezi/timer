@@ -1,19 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
-	"os"
 	"time"
 )
 
 func timer() {
+	args := flag.Args()
 	var input string
-	if len(os.Args) < 2 || os.Args[1] == "" {
+	if len(args) < 1 || args[0] == "" {
 		log.Println("no time stated. using default 30s")
 		input = "30s"
 	} else {
-		input = os.Args[1]
+		input = args[0]
 	}
 
 	duration, err := time.ParseDuration(input)

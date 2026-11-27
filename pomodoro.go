@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -13,13 +14,20 @@ func pomodorotimer() {
 	args := flag.Args()
 	var p string
 	var b string
-	if len(args) < 2 {
+	var c int
+	if len(args) < 3 {
 		log.Println("pomodoro cycle duration and break duration not stated. using default")
 		p = "25m"
 		b = "5m"
+		c = 4
 	} else {
 		p = args[0]
 		b = args[1]
+		c, err := strconv.Atoi(args[2])
+		if err != nil {
+			log.Printf("invalid cycle. expected a number got: %v", c)
+			c = 4
+		}
 	}
 
 	pomodoroduration, err := time.ParseDuration(p)
@@ -62,7 +70,7 @@ func pomodorotimer() {
 			if remaining <= 0 {
 				if !breaktime {
 					cycle++
-					if cycle == 4 {
+					if cycle == c {
 						fmt.Print("\033[2K\rPomodoro done! Starting long break...\a")
 						remaining = 15 * time.Minute
 						cycle = 0
