@@ -4,96 +4,112 @@ A simple command-line countdown timer written in Go with two modes: Timer and Po
 
 [![Architecture diagram of akene-uzezi/timer](https://gitdiagram.com/akene-uzezi/timer/diagram.png)](https://gitdiagram.com/akene-uzezi/timer?utm_source=readme&utm_medium=picture)
 
+## Installation
+
+```bash
+# Build and install globally as 'timer' (requires sudo)
+./buildandinstall.sh
+```
+
+After installation, run `timer <duration>` from anywhere.
+
+Or build locally:
+
+```bash
+go build -o skilltimer .
+./skilltimer 5m
+```
+
 ## Usage
 
 ```bash
-go run main.go [flags] <duration>
+timer [flags] <duration>
 ```
 
 ### Timer Mode (default)
 
 ```bash
-go run main.go <duration>
+timer <duration>
 ```
 
 ### Pomodoro Mode
 
 ```bash
-go run main.go -p <pomodoro-duration> <break-duration>
+timer -p <work-duration> <break-duration> [cycles]
 ```
+
+- `work-duration`: Work session length (default: 25m)
+- `break-duration`: Short break length (default: 5m)
+- `cycles`: Number of work cycles before long break (default: 4)
 
 ## Duration Format
 
-The duration accepts Go's `time.ParseDuration` format:
+Uses Go's `time.ParseDuration` format:
 
-- `1h` - 1 hour
-- `30m` - 30 minutes
-- `1m30s` - 1 minute 30 seconds
-- `45s` - 45 seconds
-- `1h30m15s` - 1 hour 30 minutes 15 seconds
+| Format | Meaning |
+|--------|---------|
+| `1h` | 1 hour |
+| `30m` | 30 minutes |
+| `1m30s` | 1 minute 30 seconds |
+| `45s` | 45 seconds |
+| `1h30m15s` | 1 hour 30 minutes 15 seconds |
 
-If no duration is provided, defaults to `30s` for timer mode and `25m`/`5m` for pomodoro mode.
+Defaults: `30s` for timer mode, `25m`/`5m`/`4` for pomodoro mode.
 
 ### Examples
 
 ```bash
-# 5 minute timer
-go run main.go 5m
+# Timer examples
+timer 5m              # 5 minute timer
+timer 1h30m           # 1 hour 30 minute timer
+timer 90s             # 90 second timer
+timer                 # Default 30 second timer
 
-# 1 hour 30 minute timer
-go run main.go 1h30m
-
-# 90 second timer
-go run main.go 90s
-
-# Default 30 second timer
-go run main.go
-
-# Pomodoro: 25min work / 5min break (default)
-go run main.go -p
-
-# Pomodoro: 50min work / 10min break
-go run main.go -p 50m 10m
-
-# Pomodoro: 1h work / 15min break
-go run main.go -p 1h 15m
+# Pomodoro examples
+timer -p                          # Default: 25m work / 5m break / 4 cycles
+timer -p 50m 10m                  # 50m work / 10m break / 4 cycles
+timer -p 1h 15m                   # 1h work / 15m break / 4 cycles
+timer -p 25m 5m 3                 # 25m work / 5m break / 3 cycles before long break
 ```
 
 ## Controls
 
-During the countdown:
+During countdown, type and press Enter:
 
-- Type `p` + Enter to **pause/resume** the timer
-- Type `s` + Enter to **stop/quit** the timer
-
-## Building
-
-```bash
-go build -o skilltimer main.go
-./skilltimer 5m
-```
-
-### Build and Install
-
-Use the provided script to build and install globally as `timer`:
-
-```bash
-./buildandinstall.sh
-```
-
-This builds the binary and installs it to `/usr/bin/timer` (requires sudo). After installation, you can run `timer <duration>` from anywhere.
+| Key | Action |
+|-----|--------|
+| `p` | Pause / Resume |
+| `s` | Stop / Quit |
 
 ## How It Works
 
 ### Timer Mode
 
-The timer counts down from the specified duration, updating the display every second in `MM:SS` format. When the timer reaches zero, it displays "00:00 time elapsed" with a terminal bell.
+Counts down from specified duration, updating display every second in `MM:SS` format. When reaching zero, displays "00:00 time elapsed" with a terminal bell.
 
 ### Pomodoro Mode
 
 Runs alternating work and break cycles:
 
 - Default: 25 minutes work / 5 minutes break
-- After 4 work cycles, takes a long break (15 minutes)
+- After N work cycles (default 4), takes a long break (15 minutes)
 - Cycles continue indefinitely until stopped
 - Each transition plays a terminal bell
+- Displays current cycle number during work sessions
+
+## Project Structure
+
+```
+.
+├── main.go           # Entry point, parses flags
+├── timer.go          # Timer mode implementation
+├── pomodoro.go       # Pomodoro mode implementation
+├── util.go           # Shared utilities (display, input handling)
+├── go.mod            # Go module definition
+├── buildandinstall.sh # Build and install script
+└── README.md
+```
+
+## Requirements
+
+- Go 1.22+
